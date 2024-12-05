@@ -1,0 +1,97 @@
+[
+    {
+        "star_table_id": "marketing_analysis_dim",
+        "origin_tables_ids": [
+            {
+                "table_name": "campaigns",
+                "schema": "marketing",
+                "origin": "marketing_db"
+            },
+            {
+                "table_name": "leads",
+                "schema": "marketing",
+                "origin": "marketing_db"
+            },
+            {
+                "table_name": "customers",
+                "schema": "public",
+                "origin": "ecommerce_db"
+            }
+        ],
+        "periodicity": "daily",
+        "status": "-1"
+    },
+    {
+        "star_table_id": "sales_summary_fact",
+        "origin_tables_ids": [
+            {
+                "table_name": "orders",
+                "schema": "public",
+                "origin": "ecommerce_db"
+            },
+            {
+                "table_name": "transactions",
+                "schema": "finance",
+                "origin": "finance_db"
+            }
+        ],
+        "periodicity": "weekly",
+        "status": "-1"
+    },
+    {
+        "star_table_id": "hr_analytics_fact",
+        "origin_tables_ids": [
+            {
+                "table_name": "employees",
+                "schema": "hr",
+                "origin": "hr_db"
+            },
+            {
+                "table_name": "departments",
+                "schema": "hr",
+                "origin": "hr_db"
+            },
+            {
+                "table_name": "salaries",
+                "schema": "finance",
+                "origin": "finance_db"
+            }
+        ],
+        "periodicity": "monthly",
+        "status": "-1"
+    },
+    {
+        "star_table_id": "financial_overview_dim",
+        "origin_tables_ids": [
+            {
+                "table_name": "budgets",
+                "schema": "finance",
+                "origin": "finance_db"
+            },
+            {
+                "table_name": "purchases",
+                "schema": "purchasing",
+                "origin": "purchasing_db"
+            }
+        ],
+        "periodicity": "hourly",
+        "status": "-1"
+    },
+    {
+        "star_table_id": "product_performance_fact",
+        "origin_tables_ids": [
+            {
+                "table_name": "products",
+                "schema": "public",
+                "origin": "ecommerce_db"
+            },
+            {
+                "table_name": "inventory",
+                "schema": "warehouse",
+                "origin": "warehouse_db"
+            }
+        ],
+        "periodicity": "hourly",
+        "status": "-1"
+    }
+]

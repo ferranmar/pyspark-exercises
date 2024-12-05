@@ -1,0 +1,122 @@
+[
+    {
+        "table_name": "customers",
+        "schema": "public",
+        "origin": "ecommerce_db",
+        "business_tables_ids": [
+            "marketing_analysis_dim"
+        ],
+        "periodicity": "daily",
+        "status": "-1"
+    },
+    {
+        "table_name": "orders",
+        "schema": "public",
+        "origin": "ecommerce_db",
+        "business_tables_ids": [
+            "sales_summary_fact"
+        ],
+        "periodicity": "weekly",
+        "status": "-1"
+    },
+    {
+        "table_name": "products",
+        "schema": "public",
+        "origin": "ecommerce_db",
+        "business_tables_ids": [
+            "product_performance_fact"
+        ],
+        "periodicity": "hourly",
+        "status": "-1"
+    },
+    {
+        "table_name": "salaries",
+        "schema": "finance",
+        "origin": "finance_db",
+        "business_tables_ids": [
+            "hr_analytics_fact"
+        ],
+        "periodicity": "monthly",
+        "status": "-1"
+    },
+    {
+        "table_name": "transactions",
+        "schema": "finance",
+        "origin": "finance_db",
+        "business_tables_ids": [
+            "sales_summary_fact"
+        ],
+        "periodicity": "weekly",
+        "status": "-1"
+    },
+    {
+        "table_name": "budgets",
+        "schema": "finance",
+        "origin": "finance_db",
+        "business_tables_ids": [
+            "financial_overview_dim"
+        ],
+        "periodicity": "hourly",
+        "status": "-1"
+    },
+    {
+        "table_name": "campaigns",
+        "schema": "marketing",
+        "origin": "marketing_db",
+        "business_tables_ids": [
+            "marketing_analysis_dim"
+        ],
+        "periodicity": "daily",
+        "status": "-1"
+    },
+    {
+        "table_name": "leads",
+        "schema": "marketing",
+        "origin": "marketing_db",
+        "business_tables_ids": [
+            "marketing_analysis_dim"
+        ],
+        "periodicity": "daily",
+        "status": "-1"
+    },
+    {
+        "table_name": "inventory",
+        "schema": "warehouse",
+        "origin": "warehouse_db",
+        "business_tables_ids": [
+            "product_performance_fact"
+        ],
+        "periodicity": "hourly",
+        "status": "-1"
+    },
+    {
+        "table_name": "employees",
+        "schema": "hr",
+        "origin": "hr_db",
+        "business_tables_ids": [
+            "hr_analytics_fact"
+        ],
+        "periodicity": "monthly",
+        "status": "-1"
+    },
+    {
+        "table_name": "departments",
+        "schema": "hr",
+        "origin": "hr_db",
+        "business_tables_ids": [
+            "hr_analytics_fact"
+        ],
+        "periodicity": "monthly",
+        "status": "-1"
+    },
+    {
+        "table_name": "purchases",
+        "schema": "purchasing",
+        "origin": "purchasing_db",
+        "business_tables_ids": [
+            "financial_overview_dim"
+        ],
+        "periodicity": "hourly",
+        "status": "-1"
+    }
+]
