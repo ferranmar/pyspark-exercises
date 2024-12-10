@@ -1,6 +1,6 @@
 # Import the necessary modules
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import date_format, to_date
+from pyspark.sql.functions import to_date
 from pyspark.sql.types import LongType, StringType, StructField, StructType
 
 # Path to csv files in master machine
@@ -54,20 +54,21 @@ df_ca = df_ca.withColumns(
     {
         "statistics_date": to_date("statistics_date", "yy.dd.MM"),
         "publish_date": to_date("publish_date", "yyyy-MM-dd'T'HH:mm:ss.SSSX"),
-
     }
 )
 df_ca.printSchema()
-###########################
-##        RESULTADO      ##
-###########################
-
 
 ############################
 ##       EJERCICIO 3      ##
 ############################
+from pyspark.sql.functions import count, format_number, isnull, lit, when
 
-
+amount_missing_df = df_ca.select(
+    [
+        (format_number(count(when(isnull(c), c)) / count(lit(1)), 2)).alias(c)
+        for c in df_ca.columns
+    ]
+)
 ###########################
 ##        RESULTADO      ##
 ###########################
@@ -76,8 +77,32 @@ df_ca.printSchema()
 ############################
 ##       EJERCICIO 4      ##
 ############################
+# df_ca.fillna(
+#     {
+#         "city": "unknown",
+#         "otro": 0,
+#     }
+# )
 
+from pyspark.sql.types import DateType
 
+fill_values = {}
+for field in df_ca.schema:
+    match field.dataType:
+        case StringType():
+            fill_values[field.name] = "default"
+        case LongType():
+            fill_values[field.name] = 0
+        case DateType():
+            fill_values[field.name] = "9999-99-99"
+
+amount_missing_df = df_ca.select(
+    [
+        (format_number(count(when(isnull(c), c)) / count(lit(1)), 2)).alias(c)
+        for c in df_ca.columns
+    ]
+)
+amount_missing_df.show()
 ###########################
 ##        RESULTADO      ##
 ###########################
@@ -86,7 +111,16 @@ df_ca.printSchema()
 ############################
 ##       EJERCICIO 5      ##
 ############################
+from pyspark.sql.functions import year
 
+df_grouped = (
+    df_ca.dropDuplicates(["video_id"])
+    .groupBy(year(df_ca["publish_date"]).alias("year_publish_date"))
+    .count()
+)
+df_grouped.show()
+most_videos_year = df_grouped.orderBy(df_grouped["year_publish_date"].desc()).first()
+print(most_videos_year)
 
 ###########################
 ##        RESULTADO      ##
@@ -96,8 +130,8 @@ df_ca.printSchema()
 ############################
 ##       EJERCICIO 6      ##
 ############################
-
-
+df_ca.where(year(df_ca["publish_date"]) == 2017).show()
+breakpoint()
 ###########################
 ##        RESULTADO      ##
 ###########################
