@@ -56,23 +56,28 @@ spark.sparkContext.setLogLevel("ERROR")
 df_ca = spark.read.csv("./data/CAvideos.csv", schema=schema, header=True)
 df_mx = spark.read.csv("./data/MXvideos.csv", schema=schema, header=True)
 df_us = spark.read.csv("./data/USvideos.csv", schema=schema, header=True)
-raw_dfs = {"CA": df_ca, "MX": df_mx, "US": df_us}
+dfs = {"CA": df_ca, "MX": df_mx, "US": df_us}
 
-for column_name in ("views", "likes"):
-    df_ca = df_ca.withColumn(column_name, df_ca[column_name].cast(LongType()))
+for name, df in dfs.items():
+    for column_name in ("views", "likes"):
+        df = df.withColumn(column_name, df[column_name].cast(LongType()))
+    dfs[name] = df
 
 rename_columns = {"trending_date": "statistics_date", "publish_time": "publish_date"}
-for old_name, new_name in rename_columns.items():
-    df_ca = df_ca.withColumnRenamed(old_name, new_name)
+for name, df in dfs.items():
+    for old_name, new_name in rename_columns.items():
+        df = df.withColumnRenamed(old_name, new_name)
+    dfs[name] = df
 
-
-df_ca = df_ca.withColumns(
-    {
-        "statistics_date": to_date("statistics_date", "yy.dd.MM"),
-        "publish_date": to_date("publish_date", "yyyy-MM-dd'T'HH:mm:ss.SSSX"),
-    }
-)
-df_ca.printSchema()
+for name, df in dfs.items():
+    df = df.withColumns(
+        {
+            "statistics_date": to_date("statistics_date", "yy.dd.MM"),
+            "publish_date": to_date("publish_date", "yyyy-MM-dd'T'HH:mm:ss.SSSX"),
+        }
+    )
+    df.printSchema()
+    dfs[name] = df
 
 ############################
 ##       EJERCICIO 3      ##
