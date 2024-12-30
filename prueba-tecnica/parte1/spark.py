@@ -1,5 +1,5 @@
 # Import the necessary modules
-from pyspark.sql import SparkSession, Window
+from pyspark.sql import DataFrame, SparkSession, Window
 from pyspark.sql.functions import (
     column,
     count,
@@ -42,7 +42,7 @@ schema = StructType(
 ############################
 ##       EJERCICIO 1      ##
 ############################
-builder: SparkSession.Builder = SparkSession.builder
+builder: SparkSession.Builder = SparkSession.builder  # type: ignore
 spark = (
     builder.appName("prueba-tecnica")
     .config("spark.sql.legacy.timeParserPolicy", "LEGACY")
@@ -79,10 +79,11 @@ for name, df in dfs.items():
     df.printSchema()
     dfs[name] = df
 
+
 ############################
 ##       EJERCICIO 3      ##
 ############################
-for name, df in dfs.items():
+def null_percentage_df(df: DataFrame) -> DataFrame:
     amount_missing_df = df.select(
         [
             (
@@ -94,8 +95,15 @@ for name, df in dfs.items():
             for c in df.columns
         ]
     )
+    return amount_missing_df
+
+
+for name, df in dfs.items():
+    df = null_percentage_df(df)
     print(name)
-    amount_missing_df.show()
+    df.show()
+
+
 ############################
 ##       EJERCICIO 4      ##
 ############################
