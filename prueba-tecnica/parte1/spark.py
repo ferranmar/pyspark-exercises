@@ -82,13 +82,20 @@ for name, df in dfs.items():
 ############################
 ##       EJERCICIO 3      ##
 ############################
-
-amount_missing_df = df_ca.select(
-    [
-        (format_number(count(when(isnull(c), c)) / count(lit(1)), 2)).alias(c)
-        for c in df_ca.columns
-    ]
-)
+for name, df in dfs.items():
+    amount_missing_df = df.select(
+        [
+            (
+                format_number(
+                    count(when(isnull(c), c)) / count(lit(1)),
+                    2,
+                )
+            ).alias(c)
+            for c in df.columns
+        ]
+    )
+    print(name)
+    amount_missing_df.show()
 ############################
 ##       EJERCICIO 4      ##
 ############################
