@@ -114,24 +114,26 @@ for name, df in dfs.items():
 #     }
 # )
 
+for name, df in dfs.items():
+    fill_values = {}
+    for field in dfs["CA"].schema:
+        match field.dataType:
+            case StringType():
+                fill_values[field.name] = "default"
+            case LongType():
+                fill_values[field.name] = 0
+            case DateType():
+                fill_values[field.name] = "9999-99-99"
+            case _:
+                raise ValueError("Data Type not expected")
 
-fill_values = {}
-for field in df_ca.schema:
-    match field.dataType:
-        case StringType():
-            fill_values[field.name] = "default"
-        case LongType():
-            fill_values[field.name] = 0
-        case DateType():
-            fill_values[field.name] = "9999-99-99"
+    df.fillna(fill_values)
+    dfs[name] = df
 
-amount_missing_df = df_ca.select(
-    [
-        (format_number(count(when(isnull(c), c)) / count(lit(1)), 2)).alias(c)
-        for c in df_ca.columns
-    ]
-)
-amount_missing_df.show()
+for name, df in dfs.items():
+    df = null_percentage_df(df)
+    print(name)
+    df.show()
 
 ############################
 ##       EJERCICIO 5      ##
