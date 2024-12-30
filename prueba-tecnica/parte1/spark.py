@@ -150,6 +150,7 @@ for name, df in dfs.items():
 ############################
 ##       EJERCICIO 6      ##
 ############################
+# TODO: Delete all the dates that are not the last one per video_id and once done. Group them and count
 df_2017 = df_ca.where(year("publish_date") == 2017)
 
 w = Window.partitionBy("video_id").orderBy(desc("statistics_date"))
