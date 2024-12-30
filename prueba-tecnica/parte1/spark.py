@@ -163,12 +163,9 @@ month_with_more_visits = grouped.orderBy(desc("count")).first()
 ############################
 ##       EJERCICIO 7      ##
 ############################
-df_ca = spark.read.csv("./data/CAvideos.csv", schema=schema, header=True)
-df_mx = spark.read.csv("./data/MXvideos.csv", schema=schema, header=True)
-df_us = spark.read.csv("./data/USvideos.csv", schema=schema, header=True)
-df_ca.createOrReplaceTempView("df_ca")
-df_mx.createOrReplaceTempView("df_mx")
-df_us.createOrReplaceTempView("df_us")
+dfs["CA"].createOrReplaceTempView("df_ca")
+dfs["MX"].createOrReplaceTempView("df_mx")
+dfs["US"].createOrReplaceTempView("df_us")
 
 shared_videos = spark.sql(
     """SELECT 
@@ -180,18 +177,6 @@ shared_videos = spark.sql(
         ON df_mx.video_id = df_us.video_id"""
 )
 shared_videos.show()
-
-
-###########################
-##        RESULTADO      ##
-###########################
-
-
 ############################
 ##       EJERCICIO 8     ##
 ############################
-
-
-###########################
-##        RESULTADO      ##
-###########################
