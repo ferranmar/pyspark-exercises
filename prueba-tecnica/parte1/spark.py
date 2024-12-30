@@ -1,7 +1,19 @@
 # Import the necessary modules
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import to_date
-from pyspark.sql.types import LongType, StringType, StructField, StructType
+from pyspark.sql import SparkSession, Window
+from pyspark.sql.functions import (
+    column,
+    count,
+    desc,
+    format_number,
+    isnull,
+    lit,
+    month,
+    row_number,
+    to_date,
+    when,
+    year,
+)
+from pyspark.sql.types import DateType, LongType, StringType, StructField, StructType
 
 # Path to csv files in master machine
 path_data = "/opt/bitnami/spark/prueba-tecnica/data"
@@ -61,7 +73,6 @@ df_ca.printSchema()
 ############################
 ##       EJERCICIO 3      ##
 ############################
-from pyspark.sql.functions import count, format_number, isnull, lit, when
 
 amount_missing_df = df_ca.select(
     [
@@ -69,11 +80,6 @@ amount_missing_df = df_ca.select(
         for c in df_ca.columns
     ]
 )
-###########################
-##        RESULTADO      ##
-###########################
-
-
 ############################
 ##       EJERCICIO 4      ##
 ############################
@@ -84,7 +90,6 @@ amount_missing_df = df_ca.select(
 #     }
 # )
 
-from pyspark.sql.types import DateType
 
 fill_values = {}
 for field in df_ca.schema:
@@ -103,15 +108,10 @@ amount_missing_df = df_ca.select(
     ]
 )
 amount_missing_df.show()
-###########################
-##        RESULTADO      ##
-###########################
-
 
 ############################
 ##       EJERCICIO 5      ##
 ############################
-from pyspark.sql.functions import year
 
 df_grouped = (
     df_ca.dropDuplicates(["video_id"])
@@ -119,27 +119,42 @@ df_grouped = (
     .count()
 )
 df_grouped.show()
-most_videos_year = df_grouped.orderBy(df_grouped["year_publish_date"].desc()).first()
+most_videos_year = df_grouped.orderBy(desc("year_publish_date")).first()
 print(most_videos_year)
-
-###########################
-##        RESULTADO      ##
-###########################
 
 
 ############################
 ##       EJERCICIO 6      ##
 ############################
-df_ca.where(year(df_ca["publish_date"]) == 2017).show()
-breakpoint()
-###########################
-##        RESULTADO      ##
-###########################
+df_2017 = df_ca.where(year("publish_date") == 2017)
 
+w = Window.partitionBy("video_id").orderBy(desc("statistics_date"))
 
+filtered = df_2017.withColumn("row_number", row_number().over(w))
+filtered = filtered.filter(column("row_number") == 1)
+grouped = filtered.groupBy(month("publish_date").alias("month")).count()
+grouped.show()
+month_with_more_visits = grouped.orderBy(desc("count")).first()
 ############################
 ##       EJERCICIO 7      ##
 ############################
+df_ca = spark.read.csv("./data/CAvideos.csv", schema=schema, header=True)
+df_mx = spark.read.csv("./data/MXvideos.csv", schema=schema, header=True)
+df_us = spark.read.csv("./data/USvideos.csv", schema=schema, header=True)
+df_ca.createOrReplaceTempView("df_ca")
+df_mx.createOrReplaceTempView("df_mx")
+df_us.createOrReplaceTempView("df_us")
+
+shared_videos = spark.sql(
+    """SELECT 
+        * 
+    FROM df_ca 
+    INNER JOIN df_mx 
+        ON df_ca.video_id = df_mx.video_id
+    INNER JOIN df_us
+        ON df_mx.video_id = df_us.video_id"""
+)
+shared_videos.show()
 
 
 ###########################
