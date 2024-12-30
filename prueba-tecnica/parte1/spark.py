@@ -54,6 +54,10 @@ spark.sparkContext.setLogLevel("ERROR")
 ##       EJERCICIO 2      ##
 ############################
 df_ca = spark.read.csv("./data/CAvideos.csv", schema=schema, header=True)
+df_mx = spark.read.csv("./data/MXvideos.csv", schema=schema, header=True)
+df_us = spark.read.csv("./data/USvideos.csv", schema=schema, header=True)
+raw_dfs = {"CA": df_ca, "MX": df_mx, "US": df_us}
+
 for column_name in ("views", "likes"):
     df_ca = df_ca.withColumn(column_name, df_ca[column_name].cast(LongType()))
 
