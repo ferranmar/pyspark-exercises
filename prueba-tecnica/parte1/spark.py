@@ -138,17 +138,15 @@ for name, df in dfs.items():
 ############################
 ##       EJERCICIO 5      ##
 ############################
-
-df_grouped = (
-    df_ca.dropDuplicates(["video_id"])
-    .groupBy(year(df_ca["publish_date"]).alias("year_publish_date"))
-    .count()
-)
-df_grouped.show()
-most_videos_year = df_grouped.orderBy(desc("year_publish_date")).first()
-print(most_videos_year)
-
-
+for name, df in dfs.items():
+    df_grouped_per_year = (
+        df.dropDuplicates(["video_id"])
+        .groupBy(year("publish_date").alias("year_publish_date"))
+        .count()
+    )
+    df_grouped_per_year.show()
+    most_videos_year = df_grouped_per_year.orderBy(desc("year_publish_date")).first()
+    print(most_videos_year)
 ############################
 ##       EJERCICIO 6      ##
 ############################
