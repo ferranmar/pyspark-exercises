@@ -157,9 +157,13 @@ w = Window.partitionBy("video_id").orderBy(desc("statistics_date"))
 
 filtered = df_2017.withColumn("row_number", row_number().over(w))
 filtered = filtered.filter(column("row_number") == 1)
-grouped = filtered.groupBy(month("publish_date").alias("month")).count()
+grouped = (
+    filtered.groupBy(month("publish_date").alias("month"))
+    .sum("views")
+    .alias("sum_views")
+)
 grouped.show()
-month_with_more_visits = grouped.orderBy(desc("count")).first()
+month_with_more_visits = grouped.orderBy(desc("sum_views")).first()
 ############################
 ##       EJERCICIO 7      ##
 ############################
@@ -169,14 +173,45 @@ dfs["US"].createOrReplaceTempView("df_us")
 
 shared_videos = spark.sql(
     """SELECT 
-        * 
+        DISTINCT * 
     FROM df_ca 
     INNER JOIN df_mx 
         ON df_ca.video_id = df_mx.video_id
     INNER JOIN df_us
         ON df_mx.video_id = df_us.video_id"""
 )
-shared_videos.show()
+print(shared_videos.count())
 ############################
 ##       EJERCICIO 8     ##
 ############################
+shared_videos.createOrReplaceTempView("shared_videos")
+most_viewed = spark.sql(
+    """
+    SELECT 
+        video_id,
+        views 
+    FROM (
+        SELECT
+            video_id,
+            views,
+            rank() over (order by views DESC) as rank
+        FROM shared_videos
+    )
+    WHERE rank = 1
+    """
+)
+most_liked = spark.sql(
+    """
+    SELECT 
+        video_id,
+        likes 
+    FROM (
+        SELECT
+            video_id,
+            likes,
+            rank() over (order by likes DESC) as rank
+        FROM shared_videos
+    )
+    WHERE rank = 1
+    """
+)
